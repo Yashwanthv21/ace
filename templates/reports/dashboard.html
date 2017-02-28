@@ -1,0 +1,68 @@
+{% extends "reports/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block pagestyles %}
+    {% load staticfiles %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'plugins/datatables/dataTables.bootstrap.css' %}">
+{% endblock %}
+
+{% block maincontent %}
+    <section class="content-header">
+        <h1>
+            Dashboard
+            <small>Click on device to view more details</small>
+        </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">List of devices</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <table id="device-list" class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Device Name</th>
+                                <th>Device IMEI</th>{% comment %}
+                                {% if request.user.is_superuser %}
+                                    <th>Username</th>
+                                {% endif %}{% endcomment %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for row in imei_table %}
+                                <tr>
+                                    <td><a href="{% url 'view' id=row.id %}">{{ row.device_name }}</a></td>
+                                    <td>{{ row.imei_numbers }}</td>
+{% comment %}                                    {% if request.user.is_superuser %}
+                                        <td>{{ row.user_id.username }}</td>
+                                    {% endif %}{% endcomment %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+{% block pagescripts %}
+    {% load staticfiles %}
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+    <script>
+        $(function () {
+            $('#device-list').DataTable();
+        });
+    </script>
+
+{% endblock %}

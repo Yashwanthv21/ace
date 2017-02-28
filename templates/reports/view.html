@@ -1,0 +1,302 @@
+{% extends "reports/base.html" %}
+
+{% block title %}View{% endblock %}
+{% block pagestyles %}
+    {% load staticfiles %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'plugins/datatables/dataTables.bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/daterangepicker/daterangepicker.css' %}">
+{% endblock %}
+{% block maincontent %}
+    <section class="content-header">
+        <h1>
+            Realtime
+            <small>Data from device</small>
+        </h1>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-md-offset-4 col-md-4">
+                <div class="box box-widget widget-user-2">
+                    <div class="widget-user-header bg-black-gradient">
+                        <div class="widget-user-image">
+                            {% comment %} <img class="img-circle" src="../dist/img/user7-128x128.jpg" alt="User Avatar">{% endcomment %}
+                        </div>
+                        <h3 class="widget-user-username">{{ device.device_name }}</h3>
+                        <h5 class="widget-user-desc">{{ device.imei_numbers }}</h5>
+                    </div>
+                    <div class="box-footer no-padding">
+                        <ul class="nav nav-stacked">
+                            <li><a href="#">Status <span id="status" class="pull-right badge bg-grey">OFF</span></a></li>
+                            <li><a href="#">Signal <span id="signal" class="pull-right">5</span></a></li>
+                            <li><a href="#">Humidity <span id="hum" class="pull-right badge bg-green">12</span></a></li>
+                            <li><a href="#">Temperature <span id="tem" class="pull-right badge bg-red">42</span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <!-- interactive chart -->
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <i class="fa fa-bar-chart-o"></i>
+
+                        <h3 class="box-title">Interactive Area Chart</h3>
+
+                        <div class="box-tools pull-right">
+                            Real time
+                            <div class="btn-group" id="realtime" data-toggle="btn-toggle">
+                                <button type="button" class="btn btn-default btn-xs active" data-toggle="on">On</button>
+                                <button type="button" class="btn btn-default btn-xs" data-toggle="off">Off</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div id="interactive" style="height: 300px;"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">Data Table With Full Features</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>Rendering engine</th>
+                                <th>Browser</th>
+                                <th>Platform(s)</th>
+                                <th>Engine version</th>
+                                <th>CSS grade</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Trident</td>
+                                <td>Internet
+                                    Explorer 4.0
+                                </td>
+                                <td>Win 95+</td>
+                                <td> 4</td>
+                                <td>X</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h2 class="page-header">Historic Data</h2>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">Data Table With Full Features</h3>
+                        <div class="pull-right box-tools">
+                            <button type="button" class="btn btn-primary btn-sm daterange pull-right" data-toggle="tooltip" title="Date range">
+                                <i class="fa fa-calendar"></i></button>
+                        </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <table id="historic-table" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>Device name</th>
+                                <th>Device IMEI</th>
+                                <th>Signal strength</th>
+                                <th>Device time</th>
+                                <th>Temperature</th>
+                                <th>Humidity</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for row in table %}
+                                <tr>
+                                    <td>{{ row.name }}</td>
+                                    <td>{{ row.imei }}</td>
+                                    <td>{{ row.s_str }}</td>
+                                    <td>{{ row.dev_time }}</td>
+                                    <td>{{ row.temperature }}</td>
+                                    <td>{{ row.humidity }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block pagescripts %}
+    {% load staticfiles %}
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'plugins/sparkline/jquery.sparkline.min.js' %}"></script>
+    <script src="{% static 'plugins/flot/jquery.flot.min.js' %}"></script>
+    <script src="{% static 'plugins/flot/jquery.flot.resize.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+    <script src="{% static 'plugins/daterangepicker/daterangepicker.js' %}"></script>
+    <script src="{% static 'plugins/datepicker/bootstrap-datepicker.js' %}"></script>
+    <script src="{% static 'plugins/reconnecting-websocket.min.js' %}"></script>
+    <script>
+        $(function () {
+            $('#example1').DataTable();
+            $('#historic-table').DataTable();
+        });
+        $("#signal").sparkline([[0,1], [0, 2], [0, 3], [0, 4],[5,0]], {
+            type: 'bar',
+            height: '20',
+            barSpacing: 2,
+            zeroColor: '#ff0000',
+            nullColor: '#255 ',
+            tooltipFormatter: function() {
+                var result = 'signal';
+                return result;
+            },
+        });
+
+        $(function () {
+            /*
+             * Flot Interactive Chart
+             * -----------------------
+             */
+            // We use an inline data source in the example, usually data would
+            // be fetched from a server
+            var data = [], totalPoints = 100;
+
+            function getRandomData() {
+
+                if (data.length > 0)
+                    data = data.slice(1);
+
+                // Do a random walk
+                while (data.length < totalPoints) {
+
+                    var prev = data.length > 0 ? data[data.length - 1] : 50,
+                        y = prev + Math.random() * 10 - 5;
+
+                    if (y < 0) {
+                        y = 0;
+                    } else if (y > 100) {
+                        y = 100;
+                    }
+
+                    data.push(y);
+                }
+
+                // Zip the generated y values with the x values
+                var res = [];
+                for (var i = 0; i < data.length; ++i) {
+                    res.push([i, data[i]]);
+                }
+
+                return res;
+            }
+
+            var interactive_plot = $.plot("#interactive", [getRandomData()], {
+                grid: {
+                    borderColor: "#f3f3f3",
+                    borderWidth: 1,
+                    tickColor: "#f3f3f3"
+                },
+                series: {
+                    shadowSize: 0, // Drawing is faster without shadows
+                    color: "#3c8dbc"
+                },
+                lines: {
+                    fill: true, //Converts the line chart to area chart
+                    color: "#3c8dbc"
+                },
+                yaxis: {
+                    min: 0,
+                    max: 100,
+                    show: true
+                },
+                xaxis: {
+                    show: true
+                }
+            });
+
+            var updateInterval = 500; //Fetch data ever x milliseconds
+            var realtime = "on"; //If == to on then fetch data every x seconds. else stop fetching
+            function update() {
+
+                interactive_plot.setData([getRandomData()]);
+
+                // Since the axes don't change, we don't need to call plot.setupGrid()
+                interactive_plot.draw();
+                if (realtime === "on")
+                    setTimeout(update, updateInterval);
+            }
+
+            //INITIALIZE REALTIME DATA FETCHING
+            if (realtime === "on") {
+                update();
+            }
+            //REALTIME TOGGLE
+            $("#realtime .btn").click(function () {
+                if ($(this).data("toggle") === "on") {
+                    realtime = "on";
+                }
+                else {
+                    realtime = "off";
+                }
+                update();
+            });
+        });
+        /*
+         * END INTERACTIVE CHART
+         */
+        {#        var newRow = "<tr><td>row 3, cell 1</td><td>row 3, cell 2</td></tr>";#}
+        {#        var table = $('table').DataTable();#}
+        {#        table.row.add($(newRow )).draw();#}
+
+        $('.daterange').daterangepicker({
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            startDate: moment().subtract(29, 'days'),
+            endDate: moment()
+        }, function (start, end) {
+            window.alert("You chose: " + start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        });
+        registerForRealtimeUpdates();
+
+        function updateData(temperature, humidity){
+            $('#tem').text(temperature)
+            $('#hum').text(humidity)
+            $('#status').toggleClass('bg-orange','bg-grey');
+            $('#status').text('ON');
+        }
+
+        function registerForRealtimeUpdates() {
+            var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+            var datasock = new ReconnectingWebSocket(ws_scheme + '://' + window.location.host + "/chat/" + {{ device.imei_numbers }}+'/');
+            datasock.onmessage = function(message) {
+                var data = JSON.parse(message.data);
+                updateData(data.tem, data.hum)
+                setTimeout(function() {
+                    $('#status').toggleClass('bg-orange','bg-grey');
+                    $('#status').text('OFF');
+                }, 60000);
+            };
+        }
+    </script>
+
+{% endblock %}
