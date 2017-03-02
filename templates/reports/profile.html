@@ -18,7 +18,7 @@
                     <div class="box-header with-border">
                         <h3 class="box-title">Profile</h3>
                     </div>
-                    <form method="POST">
+                    <form method="POST">{% csrf_token %}
                         <div class="box-body">
 
                             <div class="form-group">

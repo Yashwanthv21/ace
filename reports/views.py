@@ -1,6 +1,7 @@
 import json
 
 from channels import Group
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -36,14 +37,14 @@ def receive_data(request):
     except Exception as e:
         return HttpResponse(str(e))
 
-
+@login_required(login_url='/login/')
 def dashboard(request):
     imei_table = UsersImei.objects.all()
     if not request.user.is_superuser:
         imei_table = imei_table.filter(user_id=request.user.id)
     return render(request, 'reports/dashboard.html', {'imei_table': imei_table})
 
-
+@login_required(login_url='/login/')
 def view_device(request,id):
     imei_table_row = ''
     try:
@@ -58,7 +59,7 @@ def view_device(request,id):
     except:
         return render(request, 'reports/base.html')
 
-
+@login_required(login_url='/login/')
 def profile(request):
 
     edit_form = UserEditForm(instance=request.user)
