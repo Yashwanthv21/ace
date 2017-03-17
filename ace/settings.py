@@ -84,20 +84,20 @@ TEMPLATES = [
 #         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
-#
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'ace2',
-#         'USER': 'yash',
-#         'PASSWORD': 'yash',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-#     }
-# }
+
 DATABASES = {
-    'default': dj_database_url.config(default="postgres:///channels-example", conn_max_age=500)
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ace2',
+        'USER': 'yash',
+        'PASSWORD': 'yash',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
 }
+# DATABASES = {
+#     'default': dj_database_url.config(default="postgres:///channels-example", conn_max_age=500)
+# }
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
